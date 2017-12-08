@@ -10,18 +10,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TripServiceShould {
 
-    @Test public void
-    throw_exception_if_user_is_not_logged_in() {
-        TripServiceTest trip = new TripServiceTest();
-        User guest = new User();
+    private static final User GUEST = null;
+    private User loggedInUser;
 
-        assertThrows(UserNotLoggedInException.class, () -> trip.getTripsByUser(guest));
+    @Test public void
+    validate_that_the_user_is_logged_in() {
+        TestableTripService trip = new TestableTripService();
+        loggedInUser = GUEST;
+
+        assertThrows(UserNotLoggedInException.class, () -> trip.getTripsByUser(loggedInUser));
     }
 
-    class TripServiceTest extends TripService {
+    class TestableTripService extends TripService {
 
-        @Override protected User getLoggedUser() {
-            return null;
+        @Override protected User loggedInUser() {
+            return loggedInUser;
         }
 
     }
