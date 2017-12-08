@@ -2,6 +2,7 @@ package org.craftedsw.tripservicekata.user;
 
 
 import org.craftedsw.tripservicekata.trip.Trip;
+import org.omg.PortableInterceptor.USER_EXCEPTION;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +13,6 @@ public class User {
     private List<Trip> trips = new ArrayList<>();
     private List<User> friends = new ArrayList<>();
 
-    public List<User> getFriends() {
-        return friends;
-    }
-
     public void addFriend(User user) {
         friends.add(user);
     }
@@ -24,9 +21,16 @@ public class User {
         trips.add(trip);
     }
 
-    public List<Trip> trips() {
+    public List<User> getFriends() {
+        return friends;
+    }
 
+    public List<Trip> trips() {
         return trips;
+    }
+
+    public boolean isFriendsWith(User user) {
+        return friends.contains(user);
     }
 
 }
