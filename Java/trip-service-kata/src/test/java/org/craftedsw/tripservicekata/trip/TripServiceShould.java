@@ -3,12 +3,12 @@ package org.craftedsw.tripservicekata.trip;
 
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.craftedsw.tripservicekata.user.TestUserBuilder.aUser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,9 +41,9 @@ public class TripServiceShould {
 
     @Test public void
     not_return_any_trips_when_users_are_not_friends() {
-        User stranger = new User();
-        stranger.addFriend(SOMEBODY_ELSE);
-        stranger.addTrip(PHILADELPHIA);
+        User stranger = aUser().friendsWith(SOMEBODY_ELSE)
+                               .withTripsTo(PHILADELPHIA)
+                               .build();
 
         List<Trip> trips = tripService.getTripsByUser(stranger);
 
@@ -52,12 +52,9 @@ public class TripServiceShould {
 
     @Test public void
     return_trips_when_users_are_friends() {
-        User friend = new User();
-        friend.addFriend(loggedInUser);
-        friend.addFriend(SOMEBODY_ELSE);
-        friend.addTrip(PHILADELPHIA);
-        friend.addTrip(GEORGIA);
-        friend.addTrip(CALIFORNIA);
+        User friend = aUser().friendsWith(loggedInUser, SOMEBODY_ELSE)
+                             .withTripsTo(PHILADELPHIA, GEORGIA, CALIFORNIA)
+                             .build();
 
         List<Trip> trips = tripService.getTripsByUser(friend);
 
@@ -76,4 +73,6 @@ public class TripServiceShould {
         }
     }
 
+
 }
+
