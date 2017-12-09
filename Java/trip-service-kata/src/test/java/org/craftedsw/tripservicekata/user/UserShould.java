@@ -1,9 +1,7 @@
 package org.craftedsw.tripservicekata.user;
 
 
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
+import org.junit.Test;
 
 import static org.craftedsw.tripservicekata.user.TestUserBuilder.aUser;
 import static org.hamcrest.CoreMatchers.is;

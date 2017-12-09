@@ -3,17 +3,22 @@ package org.craftedsw.tripservicekata.trip;
 
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
 import static org.craftedsw.tripservicekata.user.TestUserBuilder.aUser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 
 
+@RunWith(MockitoJUnitRunner.class)
 public class TripServiceShould {
 
     private static final User GUEST = null;
@@ -22,17 +27,13 @@ public class TripServiceShould {
     private static final Trip PHILADELPHIA = new Trip();
     private static final Trip CALIFORNIA = new Trip();
     private static final Trip GEORGIA = new Trip();
-    private TripService tripService;
 
-    @BeforeEach
-    public void initialise() {
-        tripService = new TestableTripService();
-    }
+    @Mock private TripDAO tripDAO;
+    @InjectMocks @Spy private TripService tripService = new TripService();
 
-    @Test public void
+    @Test(expected = UserNotLoggedInException.class) public void
     validate_that_the_user_is_logged_in() {
-        assertThrows(UserNotLoggedInException.class,
-                     () -> tripService.getTripsByUser(REGISTERED_USER, GUEST));
+        tripService.getFriendsTrips(SOMEBODY_ELSE, GUEST);
     }
 
     @Test public void
@@ -41,7 +42,7 @@ public class TripServiceShould {
                                .withTripsTo(PHILADELPHIA)
                                .build();
 
-        List<Trip> trips = tripService.getTripsByUser(stranger, REGISTERED_USER);
+        List<Trip> trips = tripService.getFriendsTrips(stranger, REGISTERED_USER);
 
         assertThat(trips.size(), is(0));
     }
@@ -52,17 +53,11 @@ public class TripServiceShould {
                              .withTripsTo(PHILADELPHIA, GEORGIA, CALIFORNIA)
                              .build();
 
-        List<Trip> trips = tripService.getTripsByUser(friend, REGISTERED_USER);
+        given(tripDAO.tripsBy(friend)).willReturn(friend.trips());
+
+        List<Trip> trips = tripService.getFriendsTrips(friend, REGISTERED_USER);
 
         assertThat(trips.size(), is(3));
-    }
-
-
-    class TestableTripService extends TripService {
-
-        @Override protected List<Trip> tripsByUser(User user) {
-            return user.trips();
-        }
     }
 
 }
