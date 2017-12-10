@@ -18,7 +18,7 @@ public class TripService {
         validate(loggedInUser);
 
         return (somebody.isFriendsWith(loggedInUser))
-               ? tripsBy(somebody)
+               ? friendsTrips(somebody)
                : noTrips();
     }
 
@@ -32,8 +32,8 @@ public class TripService {
         return new ArrayList<>();
     }
 
-    private List<Trip> tripsBy(User user) {
-        return tripDAO.tripsBy(user);
+    private List<Trip> friendsTrips(User friend) {
+        return tripDAO.tripsBy(friend);
     }
 
 }
